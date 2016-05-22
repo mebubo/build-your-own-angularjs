@@ -2,6 +2,8 @@
 
 var _ = require('lodash');
 
+function initWatchVal() {}
+
 function Scope() {
   this.$$watchers = [];
 }
@@ -9,7 +11,8 @@ function Scope() {
 Scope.prototype.$watch = function(watchFn, listenerFn) {
   var watcher = {
     watchFn: watchFn,
-    listenerFn: listenerFn
+    listenerFn: listenerFn,
+    last: initWatchVal
   };
   this.$$watchers.push(watcher);
 };
@@ -20,7 +23,9 @@ Scope.prototype.$digest = function() {
     var newValue = watcher.watchFn(self);
     var oldValue = watcher.last;
     if (newValue !== oldValue) {
-      watcher.listenerFn(newValue, oldValue, self);
+      watcher.listenerFn(newValue,
+                         oldValue === initWatchVal ? newValue : oldValue,
+                         self);
       watcher.last = newValue;
     }
   });
