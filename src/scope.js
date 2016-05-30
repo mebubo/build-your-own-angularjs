@@ -22,6 +22,7 @@ Scope.prototype.$watch = function(watchFn, listenerFn, valueEq) {
     var index = self.$$watchers.indexOf(watcher);
     if (index >= 0) {
       self.$$watchers.splice(index, 1);
+      self.$$lastDirtyWatch = null;
     }
   };
 };
@@ -31,17 +32,19 @@ Scope.prototype.$$digestOnce = function() {
   var dirty;
   _.forEachRight(this.$$watchers, function(watcher) {
     try {
-      var newValue = watcher.watchFn(self);
-      var oldValue = watcher.last;
-      if (!self.$$areEqual(newValue, oldValue, watcher.valueEq)) {
-        self.$$lastDirtyWatch = watcher;
-        watcher.listenerFn(newValue,
-                           oldValue === initWatchVal ? newValue : oldValue,
-                           self);
-        watcher.last = watcher.valueEq ? _.cloneDeep(newValue) : newValue;
-        dirty = true;
-      } else if (self.$$lastDirtyWatch === watcher) {
-        return false;
+      if (watcher) {
+        var newValue = watcher.watchFn(self);
+        var oldValue = watcher.last;
+        if (!self.$$areEqual(newValue, oldValue, watcher.valueEq)) {
+          self.$$lastDirtyWatch = watcher;
+          watcher.listenerFn(newValue,
+                             oldValue === initWatchVal ? newValue : oldValue,
+                             self);
+          watcher.last = watcher.valueEq ? _.cloneDeep(newValue) : newValue;
+          dirty = true;
+        } else if (self.$$lastDirtyWatch === watcher) {
+          return false;
+        }
       }
     } catch(e) {
       console.error(e);
