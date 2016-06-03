@@ -7,6 +7,7 @@ function initWatchVal() {}
 function Scope() {
   this.$$watchers = [];
   this.$$asyncQueue = [];
+  this.$$phase = null;
 }
 
 Scope.prototype.$watch = function(watchFn, listenerFn, valueEq) {
