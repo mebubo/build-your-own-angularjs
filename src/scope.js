@@ -7,6 +7,7 @@ function initWatchVal() {}
 function Scope() {
   this.$$watchers = [];
   this.$$asyncQueue = [];
+  this.$$applyAsyncQueue = [];
   this.$$phase = null;
 }
 
@@ -107,6 +108,20 @@ Scope.prototype.$evalAsync = function(expr) {
     }, 0);
   }
   this.$$asyncQueue.push({scope: this, expression: expr});
+};
+
+Scope.prototype.$applyAsync = function(expr) {
+  var self = this;
+  self.$$applyAsyncQueue.push(function() {
+    self.$eval(expr);
+  });
+  setTimeout(function() {
+    self.$apply(function() {
+      while (self.$$applyAsyncQueue.length) {
+        self.$$applyAsyncQueue.shift()();
+      }
+    });
+  }, 0);
 };
 
 Scope.prototype.$beginPhase = function(phase) {
