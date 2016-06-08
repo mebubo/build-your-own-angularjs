@@ -629,5 +629,33 @@ describe('Scope', function() {
         done();
       });
     });
+
+    it('cancels and flushes $applyAsync if digested first', function(done) {
+      scope.counter = 0;
+
+      scope.$watch(
+        function(scope) {
+          scope.counter++;
+          return scope.aValue;
+        },
+        function() {}
+      );
+
+      scope.$applyAsync(function(scope) {
+        scope.aValue = 'abc';
+      })
+      scope.$applyAsync(function(scope) {
+        scope.aValue = 'def';
+      })
+
+      scope.$digest();
+      expect(scope.counter).toBe(2);
+      expect(scope.aValue).toEqual('def');
+
+      setTimeout(function() {
+        expect(scope.counter).toBe(2);
+        done();
+      }, 50);
+    });
   });
 });
