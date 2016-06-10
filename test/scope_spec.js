@@ -658,4 +658,28 @@ describe('Scope', function() {
       }, 50);
     });
   });
+
+  describe('$postDigest', function() {
+
+    var scope;
+
+    beforeEach(function() {
+      scope = new Scope();
+    });
+
+    it('runs after each digest', function() {
+      scope.counter = 0;
+      scope.$$postDigest(function() {
+        scope.counter++;
+      });
+
+      expect(scope.counter).toBe(0);
+      scope.$digest();
+
+      expect(scope.counter).toBe(1);
+      scope.$digest();
+
+      expect(scope.counter).toBe(1);
+    });
+  })
 });
