@@ -541,12 +541,31 @@ describe('Scope', function() {
 
       scope.$watch(
         function(scope) { return scope.aValue; },
-        function(newValue, oldValue, scope) { scope.counter++ }
+        function(newValue, oldValue, scope) { scope.counter++; }
       );
 
       scope.$evalAsync(function(scope) {});
 
       expect(scope.counter).toBe(0);
+      setTimeout(function() {
+        expect(scope.counter).toBe(1);
+        done();
+      }, 50);
+    });
+
+    it('catches exceptions in $evalAsync', function(done) {
+      scope.aValue =  'abc';
+      scope.counter = 0;
+
+      scope.$watch(
+        function(scope) { return scope.aValue; },
+        function(newValue, oldValue, scope) { scope.counter++; }
+      );
+
+      scope.$evalAsync(function() {
+        throw 'Error';
+      });
+
       setTimeout(function() {
         expect(scope.counter).toBe(1);
         done();
@@ -590,7 +609,7 @@ describe('Scope', function() {
       scope.asyncApplied = false;
 
       scope.$watch(
-        function(scope) { return scope.aValue },
+        function(scope) { return scope.aValue; },
         function(newValue, oldValue, scope) {
           scope.$applyAsync(function(scope) {
             scope.asyncApplied = true;
@@ -643,10 +662,10 @@ describe('Scope', function() {
 
       scope.$applyAsync(function(scope) {
         scope.aValue = 'abc';
-      })
+      });
       scope.$applyAsync(function(scope) {
         scope.aValue = 'def';
-      })
+      });
 
       scope.$digest();
       expect(scope.counter).toBe(2);
@@ -654,6 +673,23 @@ describe('Scope', function() {
 
       setTimeout(function() {
         expect(scope.counter).toBe(2);
+        done();
+      }, 50);
+    });
+
+    it('catches exceptions in $applyAsync', function(done) {
+      scope.$applyAsync(function(scope) {
+        throw 'Error';
+      });
+      scope.$applyAsync(function(scope) {
+        throw 'Error';
+      });
+      scope.$applyAsync(function(scope) {
+        scope.applied = true;
+      });
+
+      setTimeout(function() {
+        expect(scope.applied).toBe(true);
         done();
       }, 50);
     });
@@ -703,6 +739,20 @@ describe('Scope', function() {
 
       scope.$digest();
       expect(scope.watchedValue).toBe('changed value');
-    })
-  })
+    });
+
+    it('catches exceptions in $$postDigest', function() {
+      var didRun = false;
+
+      scope.$$postDigest(function () {
+        throw 'Error';
+      });
+      scope.$$postDigest(function () {
+        didRun = true;
+      });
+
+      scope.$digest();
+      expect(didRun).toBe(true);
+    });
+  });
 });
