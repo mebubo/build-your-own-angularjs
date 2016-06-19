@@ -10,6 +10,7 @@ function Scope() {
   this.$$applyAsyncQueue = [];
   this.$$applyAsyncId = null;
   this.$$postDigestQueue = [];
+  this.$$children = [];
   this.$$phase = null;
 }
 
@@ -215,7 +216,9 @@ Scope.prototype.$new = function() {
   var ChildScope = function() {};
   ChildScope.prototype = this;
   var child = new ChildScope();
+  this.$$children.push(child);
   child.$$watchers = [];
+  child.$$children = [];
   return child;
 }
 
