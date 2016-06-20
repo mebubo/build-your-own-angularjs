@@ -34,27 +34,33 @@ Scope.prototype.$watch = function(watchFn, listenerFn, valueEq) {
 };
 
 Scope.prototype.$$digestOnce = function() {
-  var self = this;
   var dirty;
-  _.forEachRight(this.$$watchers, function(watcher) {
-    try {
-      if (watcher) {
-        var newValue = watcher.watchFn(self);
-        var oldValue = watcher.last;
-        if (!self.$$areEqual(newValue, oldValue, watcher.valueEq)) {
-          self.$$lastDirtyWatch = watcher;
-          watcher.listenerFn(newValue,
-                             oldValue === initWatchVal ? newValue : oldValue,
-                             self);
-          watcher.last = watcher.valueEq ? _.cloneDeep(newValue) : newValue;
-          dirty = true;
-        } else if (self.$$lastDirtyWatch === watcher) {
-          return false;
+  var continueLoop = true;
+  var self = this;
+  this.$$everyScope(function(scope) {
+    var newValue, oldValue;
+    _.forEachRight(scope.$$watchers, function(watcher) {
+      try {
+        if (watcher) {
+          newValue = watcher.watchFn(scope);
+          oldValue = watcher.last;
+          if (!scope.$$areEqual(newValue, oldValue, watcher.valueEq)) {
+            self.$$lastDirtyWatch = watcher;
+            watcher.listenerFn(newValue,
+                               oldValue === initWatchVal ? newValue : oldValue,
+                               scope);
+            watcher.last = watcher.valueEq ? _.cloneDeep(newValue) : newValue;
+            dirty = true;
+          } else if (self.$$lastDirtyWatch === watcher) {
+            continueLoop = false;
+            return false;
+          }
         }
+      } catch(e) {
+        console.error(e);
       }
-    } catch(e) {
-      console.error(e);
-    }
+    });
+    return continueLoop;
   });
   return dirty;
 };
@@ -220,6 +226,16 @@ Scope.prototype.$new = function() {
   child.$$watchers = [];
   child.$$children = [];
   return child;
+}
+
+Scope.prototype.$$everyScope = function(fn) {
+  if (fn(this)) {
+    return this.$$children.every(function(child) {
+      return child.$$everyScope(fn);
+    });
+  } else {
+    return false;
+  }
 }
 
 module.exports = Scope;
