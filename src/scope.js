@@ -261,4 +261,13 @@ Scope.prototype.$destroy = function() {
   this.$$watchers = null;
 };
 
+Scope.prototype.$watchCollection = function(watchFn, listenerFn) {
+
+  var internalWatchFn = function(scope) {};
+
+  var internalListenerFn = function() {};
+
+  return this.$watch(internalWatchFn, internalListenerFn);
+};
+
 module.exports = Scope;

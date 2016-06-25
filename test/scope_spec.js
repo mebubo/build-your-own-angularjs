@@ -1232,4 +1232,13 @@ describe('Scope', function() {
       expect(child.counter).toBe(2);
     });
   });
+
+  describe('$watchCollection', function() {
+
+    var scope;
+
+    beforeEach(function() {
+      scope = new Scope();
+    });
+  });
 });
