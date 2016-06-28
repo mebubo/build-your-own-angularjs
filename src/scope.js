@@ -276,6 +276,10 @@ Scope.prototype.$watchCollection = function(watchFn, listenerFn) {
           changeCount++;
           oldValue = [];
         }
+        if (oldValue.length !== newValue.length) {
+          changeCount++;
+          oldValue.length = newValue.length;
+        }
       } else {
 
       }
