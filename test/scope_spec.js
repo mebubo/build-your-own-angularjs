@@ -1468,7 +1468,7 @@ describe('Scope', function() {
       );
 
       scope.$digest();
-      expect(scope.conunter).toBe(1);
+      expect(scope.counter).toBe(1);
 
       scope.obj = {a: 1};
       scope.$digest();
