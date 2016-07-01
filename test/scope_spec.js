@@ -1477,6 +1477,7 @@ describe('Scope', function() {
       scope.$digest();
       expect(scope.counter).toBe(2);
     });
+
     it('notices when an attribute is added to an object', function() {
       scope.counter = 0;
       scope.obj = {a: 1};
@@ -1498,6 +1499,7 @@ describe('Scope', function() {
       scope.$digest();
       expect(scope.counter).toBe(2);
     });
+
     it('notices when an attribute is changed in an object', function() {
       scope.counter = 0;
       scope.obj = {a: 1};
@@ -1519,6 +1521,7 @@ describe('Scope', function() {
       scope.$digest();
       expect(scope.counter).toBe(2);
     });
+
     it('does not fail on NaN attributes in objects', function() {
       scope.counter = 0;
       scope.obj = {a: NaN};
@@ -1532,6 +1535,28 @@ describe('Scope', function() {
 
       scope.$digest();
       expect(scope.counter).toBe(1);
+    });
+
+    it('notices when an attribute is removed from an object', function() {
+      scope.counter = 0;
+      scope.obj = {a: 1};
+
+      scope.$watchCollection(
+        function(scope) { return scope.obj; },
+        function(newValue, oldValue, scope) {
+          scope.counter++;
+        }
+      );
+
+      scope.$digest();
+      expect(scope.counter).toBe(1);
+
+      delete scope.obj.a;
+      scope.$digest();
+      expect(scope.counter).toBe(2);
+
+      scope.$digest();
+      expect(scope.counter).toBe(2);
     });
   });
 });
