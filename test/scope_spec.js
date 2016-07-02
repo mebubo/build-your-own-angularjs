@@ -1003,7 +1003,7 @@ describe('Scope', function() {
 
       child.$digest();
       expect(child.aValueWas).toBeUndefined();
-    })
+    });
 
     it('keeps a record of its children', function() {
       var parent = new Scope();
@@ -1071,8 +1071,8 @@ describe('Scope', function() {
       setTimeout(function() {
         expect(parent.counter).toBe(1);
         done();
-      }, 50)
-    })
+      }, 50);
+    });
 
     it('does not have access to parent attributes when isolated', function() {
       var parent = new Scope();
@@ -1196,7 +1196,7 @@ describe('Scope', function() {
       expect(child.a).toBe(42);
 
       child.counter = 0;
-      child.$watch(function(scope) { scope.counter++; })
+      child.$watch(function(scope) { scope.counter++; });
 
       prototypeParent.$digest();
       expect(child.counter).toBe(0);
@@ -1317,7 +1317,7 @@ describe('Scope', function() {
         }
       );
 
-      scope.$digest()
+      scope.$digest();
       expect(scope.counter).toBe(1);
 
       scope.arr.push(4);
@@ -1339,7 +1339,7 @@ describe('Scope', function() {
         }
       );
 
-      scope.$digest()
+      scope.$digest();
       expect(scope.counter).toBe(1);
 
       scope.arr.shift();
@@ -1556,6 +1556,26 @@ describe('Scope', function() {
       expect(scope.counter).toBe(2);
 
       scope.$digest();
+      expect(scope.counter).toBe(2);
+    });
+
+    it('does not consider any object with a length property an array', function() {
+      scope.obj = {length: 42, otherKey: 'abc'};
+      scope.counter = 0;
+
+      scope.$watchCollection(
+        function(scope) { return scope.obj; },
+        function(newValue, oldValue, scope) {
+          scope.counter++;
+        }
+      );
+
+      scope.$digest();
+      expect(scope.counter).toBe(1);
+
+      scope.obj.newKey = 'def';
+      scope.$digest();
+
       expect(scope.counter).toBe(2);
     });
   });
