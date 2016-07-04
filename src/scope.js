@@ -12,6 +12,7 @@ function Scope() {
   this.$$postDigestQueue = [];
   this.$root = this;
   this.$$children = [];
+  this.$$listeners = {};
   this.$$phase = null;
 }
 
@@ -355,6 +356,14 @@ function isArrayLike(obj) {
   }
   var length = obj.length;
   return length ===0 || (_.isNumber(length) && length > 0 && (length - 1) in obj);
+}
+
+Scope.prototype.$on = function(eventName, listener) {
+  var listeners = this.$$listeners[eventName];
+  if (!listeners) {
+    this.$$listeners[eventName] = listeners = [];
+  }
+  listeners.push(listener);
 }
 
 module.exports = Scope;
