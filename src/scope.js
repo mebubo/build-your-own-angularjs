@@ -236,6 +236,7 @@ Scope.prototype.$new = function(isolated, parent) {
   }
   parent.$$children.push(child);
   child.$$watchers = [];
+  child.$$listeners = {};
   child.$$children = [];
   child.$parent = parent;
   return child;
