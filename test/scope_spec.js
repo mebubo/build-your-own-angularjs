@@ -1707,6 +1707,15 @@ describe('Scope', function() {
         expect(listener2).not.toHaveBeenCalled();
       });
 
+      it('passes an event object with a name to listeners on ' + method, function() {
+        var listener = jasmine.createSpy();
+        scope.on('someEvent', listener);
+
+        scope[method]('someEvent');
+
+        expect(listener).toHaveBeenCalled();
+        expect(listener.calls.mostRecent().args[0].toEqual('someEvent'));
+      });
     });
   });
 });
