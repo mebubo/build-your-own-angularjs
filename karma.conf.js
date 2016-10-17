@@ -1,17 +1,21 @@
+const webpack = require('./webpack.config.js')
+
 module.exports = function(config) {
   config.set({
-    frameworks: ['browserify', 'jasmine'],
+    frameworks: ['jasmine'],
     files: [
-      'src/**/*.js',
       'test/**/*_spec.js'
     ],
     preprocessors: {
-      'src/**/*.js': ['jshint', 'browserify'],
-      'test/**/*_spec.js': ['jshint', 'browserify']
+      'src/**/*.js': ['jshint', 'webpack'],
+      'test/**/*_spec.js': ['jshint', 'webpack']
     },
     browsers: ['PhantomJS'],
-    browserify: {
-      debug: true
-    }
+    webpack: webpack,
+    plugins: [
+      require('karma-webpack'),
+      require('karma-jasmine'),
+      require('karma-phantomjs-launcher')
+    ]
   })
 }
