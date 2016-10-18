@@ -7,15 +7,16 @@ module.exports = function(config) {
       'test/**/*_spec.js'
     ],
     preprocessors: {
-      'src/**/*.js': ['jshint', 'webpack'],
-      'test/**/*_spec.js': ['jshint', 'webpack']
+      'test/**/*_spec.js': ['jshint', 'webpack', 'sourcemap']
     },
     browsers: ['PhantomJS'],
     webpack: webpack,
     plugins: [
       require('karma-webpack'),
       require('karma-jasmine'),
-      require('karma-phantomjs-launcher')
+      require('karma-phantomjs-launcher'),
+      require('karma-sourcemap-loader'),
+      require('karma-jshint-preprocessor')
     ]
   })
 }
