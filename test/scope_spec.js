@@ -1770,6 +1770,15 @@ describe('Scope', function() {
         scope[method]('someEvent');
         expect(nextListener).toHaveBeenCalled();
       });
+
+      it('sets defalutPrevented whin preventDefault is called on ' + method, () => {
+        const listener = event => event.preventDefault();
+        scope.$on('someEvent', listener);
+
+        const event = scope[method]('someEvent');
+
+        expect(event.defaultPrevented).toBe(true);
+      })
     });
 
     it('propagates up the scope hierarchy on $emit', function() {
