@@ -413,7 +413,11 @@ Scope.prototype.$broadcast = function(eventName) {
 Scope.prototype.$$fireEventOnScope = function(eventName, listenerArgs) {
   var listeners = this.$$listeners[eventName] || [];
   _.forEach(listeners, function(listener) {
-    listener.apply(null, listenerArgs);
+    try {
+      listener.apply(null, listenerArgs);
+    } catch (e) {
+      console.log(e);
+    }
   });
 }
 
