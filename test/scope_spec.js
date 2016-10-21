@@ -1964,6 +1964,17 @@ describe('Scope', function() {
       scope.$destroy();
 
       expect(listener).toHaveBeenCalled();
-    })
+    });
+
+    it('no longer calls listeners after destroyed', () => {
+      const listener = jasmine.createSpy('listener');
+      scope.$on('myEvent', listener);
+
+      scope.$destroy();
+      scope.$emit('myEvent');
+
+      expect(listener).not.toHaveBeenCalled();
+    });
+
   });
 });
